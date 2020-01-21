@@ -1,6 +1,10 @@
 ## idno(IDCardNum)
 身份证号码校验及信息获取工具。
 
+用于校验身份证合法性，用于通过身份证号码获取地区（省市县）、生日、年龄、干支、属相、星座、性别。
+
+The tool is used to verify the validity of the ID card, and is used to obtain the region (province, city, county), birthday, age, ganzhi, genus, horoscope, and gender through the ID card number.
+
 #### 1. 校验
 `IdCardUtils.validateCard(idCard)`
 
