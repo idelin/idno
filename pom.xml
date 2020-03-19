@@ -3,10 +3,31 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    <name>IDCardNum</name>
+    <description>用于校验身份证合法性，用于通过身份证号码获取地区（省市县）、生日、年龄、干支、属相、星座、性别等。The tool is used to verify the validity of the ID card, and is used to obtain the region (province, city, county), birthday, age, ganzhi, genus, horoscope, and gender through the ID card number.</description>
     <groupId>win.delin</groupId>
     <artifactId>idcards</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
+    <url>https://github.com/idelin/idno</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://github.com/idelin/idno/blob/master/LICENSE.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>delin</name>
+            <email>zdl0929@gmail.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git@github.com:idelin/idno.git</connection>
+        <developerConnection>scm:git:git@github.com:idelin/idno.git</developerConnection>
+        <url>git@github.com:idelin/idno.git</url>
+    </scm>
 
     <dependencies>
         <dependency>
@@ -21,4 +42,69 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <!-- Source -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- Javadocs -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <additionalOptions>
+                                        <additionalOptions>-Xdoclint:none</additionalOptions>
+                                    </additionalOptions>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!-- GPG -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>oss</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+                <repository>
+                    <id>oss</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+        </profile>
+    </profiles>
 </project>
