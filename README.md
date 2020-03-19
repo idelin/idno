@@ -56,3 +56,16 @@ String constellation;
 // 性别
 String gender;
 ```
+
+#### 3. Maven
+
+ [maven地址](https://search.maven.org/artifact/win.delin/idcards)
+ ```xml
+<dependency>
+  <groupId>win.delin</groupId>
+  <artifactId>idcards</artifactId>
+  <version>1.0</version>
+</dependency>
+ ```
+
+
