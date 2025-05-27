@@ -26,6 +26,8 @@ public class IdCard {
     String constellation;
     // 性别
     String gender;
+    // 精确年龄
+    String detailedAge;
 
     public IdCard(String idCardNum) {
         this.idCardNum = idCardNum;
@@ -119,6 +121,14 @@ public class IdCard {
         this.ganZhi = ganZhi;
     }
 
+    public String getDetailedAge() {
+        return detailedAge;
+    }
+
+    public void setDetailedAge(String detailedAge) {
+        this.detailedAge = detailedAge;
+    }
+
     @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("IdCard{");
@@ -133,6 +143,7 @@ public class IdCard {
         sb.append(", zodiac='").append(zodiac).append('\'');
         sb.append(", constellation='").append(constellation).append('\'');
         sb.append(", gender='").append(gender).append('\'');
+        sb.append(", detailedAge='").append(detailedAge).append('\'');
         sb.append('}');
         return sb.toString();
     }

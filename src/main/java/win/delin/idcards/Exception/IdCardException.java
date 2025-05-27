@@ -25,4 +25,8 @@ public class IdCardException extends Exception {
     public IdCardException(String message) {
         super(message);
     }
+
+    public IdCardException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

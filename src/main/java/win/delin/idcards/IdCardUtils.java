@@ -1,9 +1,14 @@
 package win.delin.idcards;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import win.delin.idcards.Exception.IdCardCheckCodeErrorException;
-import win.delin.idcards.Exception.IdCardException;
+// JSONObject not used directly after fastjson 2.x update
+// import com.alibaba.fastjson.JSONObject;
+import win.delin.idcards.Exception.IdCardCheckCodeErrorException; // Keep existing
+import win.delin.idcards.Exception.IdCardException; // Keep existing
+import win.delin.idcards.Exception.InvalidIdCardLengthException; // Add this
+// Comment out or remove others if they were added prematurely for other tasks
+// import win.delin.idcards.Exception.InvalidCharacterException;
+// import win.delin.idcards.Exception.InvalidBirthDateException;
 import win.delin.lunar.Lunar;
 import win.delin.lunar.LunarSolarConverter;
 import win.delin.lunar.Solar;
@@ -27,7 +32,7 @@ public class IdCardUtils {
     /**
      * 存放地区数据
      */
-    public static JSONObject locationDatas;
+    public static Map<String, Object> locationDatas; // Changed from JSONObject
 
     /**
      * 中国公民身份证号码最小长度。
@@ -92,10 +97,10 @@ public class IdCardUtils {
     private static Map<String, String> provinceCodes = new HashMap<String, String>();
 
     static {
-        locationDatas = readLocationFile("data_location.json");
+        locationDatas = readLocationFile("data_location.json"); // readLocationFile will now return Map
         for (Map.Entry<String, Object> locationData : locationDatas.entrySet()) {
             if ("0000".equals(locationData.getKey().substring(2, 6))) {
-                provinceCodes.put(locationData.getKey().substring(0, 2), locationData.getValue().toString());
+                provinceCodes.put(locationData.getKey().substring(0, 2), (String) locationData.getValue()); // Cast to String
             }
         }
     }
@@ -138,7 +143,8 @@ public class IdCardUtils {
      * @return
      */
     public static String getProvice(String idCardNum) {
-        return locationDatas.getString(idCardNum.substring(0, 2) + "0000");
+        // Add basic validation if desired, though getInformation usually calls validateCard first
+        return (String) locationDatas.get(idCardNum.substring(0, 2) + "0000"); // Cast to String
     }
 
     /**
@@ -148,7 +154,7 @@ public class IdCardUtils {
      * @return
      */
     public static String getCity(String idCardNum) {
-        return locationDatas.getString(idCardNum.substring(0, 4) + "00");
+        return (String) locationDatas.get(idCardNum.substring(0, 4) + "00"); // Cast to String
     }
 
     /**
@@ -158,7 +164,7 @@ public class IdCardUtils {
      * @return
      */
     public static String getCounty(String idCardNum) {
-        return locationDatas.getString(idCardNum.substring(0, 6));
+        return (String) locationDatas.get(idCardNum.substring(0, 6)); // Cast to String
     }
 
     /**
@@ -385,15 +391,28 @@ public class IdCardUtils {
     /**
      * 验证身份证是否合法
      */
-    public static boolean validateCard(String idCardNum) throws IdCardException{
+    public static boolean validateCard(String idCardNum) throws IdCardException {
+        if (idCardNum == null || idCardNum.trim().isEmpty()) {
+            throw new InvalidIdCardLengthException("ID card number cannot be null or empty.");
+        }
         String card = idCardNum.trim();
-        if (validateIdCard18(card)) {
-            return true;
+
+        // Check for excessively long input first as per instructions.
+        if (card.length() > 25) { 
+            throw new InvalidIdCardLengthException("ID card number is too long.");
         }
-        if (validateIdCard15(card)) {
-            return true;
+        
+        // Then check for specific correct lengths (15 or 18).
+        if (card.length() != CHINA_ID_MIN_LENGTH && card.length() != CHINA_ID_MAX_LENGTH) {
+            throw new InvalidIdCardLengthException("ID card number length must be 15 or 18 digits.");
         }
-        return false;
+
+        // Proceed to content validation if length is correct.
+        if (card.length() == CHINA_ID_MAX_LENGTH) {
+            return validateIdCard18(card);
+        } else { // card.length() == CHINA_ID_MIN_LENGTH
+            return validateIdCard15(card);
+        }
     }
 
     /**
@@ -675,8 +694,9 @@ public class IdCardUtils {
      * @param path
      * @return
      */
-    private static JSONObject readLocationFile(String path) {
-        JSONObject dataLocations = JSON.parseObject(readFile(path));
+    private static Map<String, Object> readLocationFile(String path) { // Return type changed
+        // Explicitly parse to Map<String, Object> for compatibility with fastjson 2.x
+        Map<String, Object> dataLocations = JSON.parseObject(readFile(path), Map.class);
         return dataLocations;
     }
 }
