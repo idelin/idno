@@ -2,6 +2,7 @@ package win.delin.idcards;
 
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import win.delin.idcards.Exception.IdCardCheckCodeErrorException;
 import win.delin.idcards.Exception.IdCardException;
 
 /**
@@ -10,11 +11,12 @@ import win.delin.idcards.Exception.IdCardException;
  */
 public class IdCardUtilsTest {
 
+    private static final String INVALID_CHECK_CODE_CARD = "220202202002022222";
+
     @DataProvider(name = "idCards")
     public Object[][] getIdCards() {
         return new String[][]{
-                {"220202202002022220"},
-                {"220202202002022222"}
+                {"220202202002022220"}
         };
     }
 
@@ -29,5 +31,17 @@ public class IdCardUtilsTest {
     @Test(dataProvider = "idCards")
     public void testValidateCard(String idCard) throws IdCardException {
         System.out.println(IdCardUtils.validateCard(idCard));
+    }
+
+    @Test(expectedExceptions = IdCardCheckCodeErrorException.class,
+            expectedExceptionsMessageRegExp = "cardNo is \\[220202202002022222\\], realCheckCode must \\[0\\]")
+    public void testGetInformationRejectsBadCheckCode() throws IdCardException {
+        IdCardUtils.getInformation(INVALID_CHECK_CODE_CARD);
+    }
+
+    @Test(expectedExceptions = IdCardCheckCodeErrorException.class,
+            expectedExceptionsMessageRegExp = "cardNo is \\[220202202002022222\\], realCheckCode must \\[0\\]")
+    public void testValidateCardRejectsBadCheckCode() throws IdCardException {
+        IdCardUtils.validateCard(INVALID_CHECK_CODE_CARD);
     }
 }
